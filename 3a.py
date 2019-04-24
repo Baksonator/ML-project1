@@ -66,7 +66,7 @@ class KNN:
             return accuracy, predicted
 
 
-if __name__ == '__main':
+if __name__ == '__main__':
     filename = 'data/iris.csv'
     mapper_key_val = {
         0: 'Iris-setosa', 1: 'Iris-versicolor', 2: 'Iris-virginica'
