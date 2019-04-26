@@ -56,3 +56,5 @@ plt.axis([0, 16, 0.5, 1])
 plt.grid(True)
 plt.show()
 
+# Za razliku od prethodnog primera, accuracy se na ovom primeru (ukljucujuci sve feature) znatno povecao,
+# iznad 0.9 ukljucujuci male i retke oscilacije.

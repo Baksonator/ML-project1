@@ -54,3 +54,9 @@ plt.plot([x for x in range(1, 16)], accuracies)
 plt.axis([0, 16, 0.5, 1])
 plt.grid(True)
 plt.show()
+
+
+# U ovom primeru, ukljucujuci 2 feature-a i iteracijom kroz k od 1 do 15,
+# nema znacajne razlike, jer ukljucujemo samo mali broj feature-a.
+# Vidimo ucestale oscilacije koje su izmedju 0.6 i 0.8, u retkim slucajevima accuracy prelazi preko 0.8.
+# U vecini ovakvih slucajeva je bolje uzeti K vece od 2
