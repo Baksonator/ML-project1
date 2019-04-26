@@ -1,1 +1,11 @@
 TODO popuniti odgovorima na pitanja iz problema 1
+
+b. K-fold Cross-Validation
+K-fold Cross-Validation je statisticki metod koji se koristi za procenu preciznosti naseg modela.
+
+Za razliku od klasicne validacije (podele na trening i test skup),
+gde se preciznost dobijena na jednom test skupu moze znatno razlikovati u odnosu na preciznost dobijenu na nekom drugom test skupu,
+uvodimo resenje koje se zasniva na podeli postojeceg data seta u K manjih grupa (fold-ova) pri cemu se daje mogucnost da se svaka grupa tretira kao grupa test podataka (testing set) u nekom trenutku,
+dok se ostatak koristi za evaluaciju modela (training set).
+Ovaj postupak se ponavlja K puta, sto na kraju daje K vrednosti koje prestavljaju razlicite preciznosti u svakoj iteraciji.
+Finalna preciznost se dobija prosekom ovih vrednosti.
