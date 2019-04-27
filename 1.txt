@@ -9,3 +9,18 @@ uvodimo resenje koje se zasniva na podeli postojeceg data seta u K manjih grupa 
 dok se ostatak koristi za evaluaciju modela (training set).
 Ovaj postupak se ponavlja K puta, sto na kraju daje K vrednosti koje prestavljaju razlicite preciznosti u svakoj iteraciji.
 Finalna preciznost se dobija prosekom ovih vrednosti.
+
+c. Linearna separabilnost
+Linearna separabilnost je veoma bitan koncept u statistici, masinskom ucenju i neuralnim mrezama. Linearna separabilnost
+je odlika dva skupa tacaka, tj. podataka koje klasifikujemo u dve klase. Osnovna ideja je sledeca: Dva skupa tacaka
+, koje predstavljaju n-dimenzionalne vektore, pokusavamo da podelimo koristeci (n - 1)-dimenzionu  hiperravan, tako da
+su sve tacke jedne klase sa jedne strane, a sve tacke druge klase sa druge strane te hiperravni. Ukoliko ovo mozemo
+uraditi (moze postojati vise mogucih ispravnih hiperravni), onda kazemo da su ta dva skupa (klase) tacaka linearno
+separabilna. Ako posmatramo problem u dve dimenzije, dva skupa tacaka su linearno separabilna ukoliko mozemo povuci
+liniju izmedju njih, u tri dimenzije ukoliko postoji ravan izmedju njih itd. Ukoliko koristimo najjednostavniju
+neuralnu mrezu (perceptron) za klasifikaciju podataka u dve klase, te dve klase moraju biti linearno separabilne kako
+bi perceptron davao korektne rezultate. Najpoznatiji primer linearne neseparabilnosti jeste XOR funkcija, gde klase
+predstavljaju izlazi (0 ili 1). Proveru linearne separabilnosti dva skupa moze izvrsiti izracunavanjem konveksnog
+omotaca jednog i drugog skupa. Ukoliko se konveksni omotaci ne seku, skupovi su linearno separabilni, u suprotnom, nisu.
+Vodeci se svim prethodnim cinjenicama, lako mozemo zakljuciti da podaci iz skupa "logreg_data.csv" nisu linearno
+separabilni, sto se i jasno moze videti na grafiku koji reprezentuje ove podatke.
