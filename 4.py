@@ -284,7 +284,7 @@ for i in range(k):
         if validate_set['y'][j] == predictions_train[j]:
             nb_correct += 1
     accuracy = nb_correct / nb_total
-    print('Accuracy on validate set' + str(i) + ' is ' + str(accuracy))
+    print('Accuracy on validate set ' + str(i + 1) + ' is ' + str(accuracy))
     models[i + 1] = accuracy
 
 # Pick best model and train it on whole train set
@@ -302,6 +302,8 @@ for i in range(nb_total):
 accuracy = nb_correct / nb_total
 print('Accuracy on train set is:', accuracy)
 
+confusion_matrix = np.zeros(shape=(2, 2)) # [[TN, FP], [FN, TP]]
+
 print('Predicting test set...')
 predictions = model.predict(test_set['x'])
 nb_correct = 0
@@ -309,5 +311,18 @@ nb_total = len(predictions)
 for i in range(nb_total):
     if test_set['y'][i] == predictions[i]:
         nb_correct += 1
+    if test_set['y'][i] == 1:
+        if predictions[i] == 1:
+            confusion_matrix[1][1] += 1
+        else:
+            confusion_matrix[1][0] += 1
+    else:
+        if predictions[i] == 1:
+            confusion_matrix[0][1] += 1
+        else:
+            confusion_matrix[0][0] += 1
 accuracy = nb_correct / nb_total
 print('Accuracy on test set is:', accuracy)
+
+print('Confusion matrix:')
+print(confusion_matrix)
