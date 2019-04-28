@@ -8,6 +8,7 @@ import numpy as np
 import math
 import re
 import glob
+import heapq
 # nltk.download() # If it's you first time running, you have to run this line as well
 
 
@@ -122,7 +123,9 @@ class Data:
             words_remspecial = [re.sub(r'[^a-zA-Z0-9\s]', '', w) for w in words_lower]
             words_filtered = [w for w in words_remspecial if w not in stop_punc]
             words_stemmed = [porter.stem(w) for w in words_filtered]
-            self.clean_corpus_positive.append(words_stemmed)
+            words_remempty = list(filter(None, words_stemmed))
+            words_rembr = list(filter(lambda a: a != 'br', words_remempty))
+            self.clean_corpus_positive.append(words_rembr)
 
         for doc in self.negative_corpus:
             words = wordpunct_tokenize(doc)
@@ -130,7 +133,9 @@ class Data:
             words_remspecial = [re.sub(r'[^a-zA-Z0-9\s]', '', w) for w in words_lower]
             words_filtered = [w for w in words_remspecial if w not in stop_punc]
             words_stemmed = [porter.stem(w) for w in words_filtered]
-            self.clean_corpus_negative.append(words_stemmed)
+            words_remempty = list(filter(None, words_stemmed))
+            words_rembr = list(filter(lambda a: a != 'br', words_remempty))
+            self.clean_corpus_negative.append(words_rembr)
 
     def featurize_bow(self):
         """
@@ -195,13 +200,42 @@ class Data:
         x_positive = []
         x_negative = []
 
-        # Get count of each word across the whole corpus, calculate idf value for each word
+        # Get count of each word across the whole corpus, single out most frequent words in positive and negative corpus
         doc_counts = dict()
+        doc_counts_positive = dict()
+        doc_counts_negative = dict()
         for word in best_words:
             doc_counts[word] = 0
-            for doc in (self.clean_corpus_positive + self.clean_corpus_negative):
+            doc_counts_positive[word] = 0
+            doc_counts_negative[word] = 0
+            for doc in self.clean_corpus_positive:
                 if word in doc:
                     doc_counts[word] += 1
+                    doc_counts_positive[word] += 1
+            for doc in self.clean_corpus_negative:
+                if word in doc:
+                    doc_counts[word] += 1
+                    doc_counts_negative[word] += 1
+        best_words_positive = heapq.nlargest(5, doc_counts_positive, key=doc_counts_positive.get)
+        print('Most frequent positive words:')
+        print(best_words_positive)
+        best_words_negative = heapq.nlargest(5, doc_counts_negative, key=doc_counts_negative.get)
+        print('Most frequent negative words:')
+        print(best_words_negative)
+
+        # Calculate the LR metric for all words that are viable
+        lr = dict()
+        for word in best_words:
+            if doc_counts_positive[word] >= 10 and doc_counts_negative[word] >= 10:
+                lr[word] = doc_counts_positive[word] / doc_counts_negative[word]
+        highest_lr = heapq.nlargest(5, lr, key=lr.get)
+        print('Highest LR words:')
+        print(highest_lr)
+        lowest_lr = heapq.nsmallest(5, lr, key=lr.get)
+        print('Lowest LR words:')
+        print(lowest_lr)
+
+        # Calculate idf value for each word
         idf_table = dict()
         for word in best_words:
             idf = math.log10((len(self.clean_corpus_positive) + len(self.clean_corpus_negative)) / doc_counts[word])
@@ -326,3 +360,19 @@ print('Accuracy on test set is:', accuracy)
 
 print('Confusion matrix:')
 print(confusion_matrix)
+
+"""
+5 najcesce koriscenih reci u pozitivnim kritikama su: film, movi, one, like, time
+5 najcesce koriscenih reci u negativnim kritikama su: movi, film, one, like, time
+Primecujemo da su iste reci najcesce i u pozitivnim i u negativnim kritikama, jedina razlika jeste broj pojavljivanja,
+tj. redosled. Ovo znaci da nam ove reci uopste nisu bitne za resavanje naseg problema, tj. mozemo ih i izostaviti.
+Buduci da koristimo TF-IDF, njihov score ce bas iz ovog razloga biti manji, pa ih ne moramo zaista izbacivati.
+5 reci sa najvisom vrednoscu LR metrike su: perfectli, strong, delight, highli, excel
+5 reci sa najnizom vrednoscu LR metrike su: worst, stupid, wast, crap, ridicul
+Ove reci su veoma korisne za nas cilj klasifikacije, njihovo pojavljivanje u nekom buducem doc-u je snazan pokazatelj
+da je ta kritika pozitivna/negativna. Predstavljaju suprotnost reci koje smo pronasli u prethodnoj analizi, 
+TF-IDF ce im dodeljivati veci score i samim tim imace vecu tezinu u nasoj klasifikaciji. Reci koje smo pronasli gore ce
+imati LR vrednosti blizu 1, odnosno nalazice se u sredini raspodele. LR metrika je znacajna jer nam pokazuje koje reci
+imaju vece znacenje (tezinu) u nasem kontekstu, a koje manju, odnosno govori nam na koje reci treba obratiti posebnu 
+paznju a koje reci treba zanemariti.
+"""
