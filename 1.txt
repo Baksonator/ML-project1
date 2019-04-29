@@ -1,4 +1,3 @@
-TODO popuniti odgovorima na pitanja iz problema 1
 a. Word2vec
 Word2vec predstavlja jednostavan model masinskog ucenja koji proizvodi “word embedding”, tj. procese u kojima je svaka
 rec mapirana u niz brojeva, odnosno vektor. Model je dvoslojna neuralna mreza koja kao ulaz uzima korpus teksta i kao
