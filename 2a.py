@@ -46,6 +46,7 @@ def polynomial_regression(data_x, data_y, nb_features, nb_samples):
     and total loss.
     """
 
+    tf.reset_default_graph()
     data_x = create_feature_matrix(data_x, nb_features)
 
     X = tf.placeholder(shape=(None, nb_features), dtype=tf.float32)
@@ -82,14 +83,14 @@ def polynomial_regression(data_x, data_y, nb_features, nb_samples):
 
         w_val = sess.run(w)
         bias_val = sess.run(bias)
-        print('w = ', w_val, 'bias = ', bias_val, '\n')
+        print('w = ', w_val, 'bias = ', bias_val)
+        print('total loss = ', total_loss, '\n')
         xs = create_feature_matrix(np.linspace(-2, 4, 100), nb_features)
         hyp_val = sess.run(hyp, feed_dict={X: xs})
         return xs, hyp_val, total_loss
 
 
 def main():
-    tf.reset_default_graph()
     np.set_printoptions(suppress=True, precision=5)                     # display floating point numbers to 5 decimals
 
     data_x, data_y, nb_samples = process_data('data/funky.csv')
@@ -122,3 +123,15 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+"""
+Zakljucak:
+
+Regresiona kriva i funkcija troska su jako slicne za polinome stepena 1 i 2. Tada je vrednost finalne funkcije troska 
+na celom skupu ~3916.88714, dok je prosecan trosak ~0.3140487. Krive prvog i drugog stepena ne "fituju" podatke dovoljno
+precizno, sto nije slucaj sa polinomima veceg stepena. Regresiona kriva treceg stepena prati podatke dobro, vrednost
+finalne funkcije troska je ~1567.86235, a prosecan trosak iznosi ~0.1094187. Slican je slucaj sa polinomima stepena 4, 
+5 i 6. Kako se stepen polinoma povecava, regresiona kriva se ne menja znacajno. Takodje se finalne i prosecne funkcija 
+troska ne smanjuju mnogo. Stoga, najoptimalnije je izbrati stepen polinoma 3.
+
+"""

@@ -46,17 +46,18 @@ def polynomial_regression(data_x, data_y, nb_features, nb_samples, lmd):
     returns the calculated hypothesis and total loss.
     """
 
+    tf.reset_default_graph()
     data_x = create_feature_matrix(data_x, nb_features)
 
-    X = tf.placeholder(shape=(None, nb_features), dtype=tf.float32)
-    Y = tf.placeholder(shape=None, dtype=tf.float32)
-    w = tf.Variable(tf.zeros(nb_features))
-    bias = tf.Variable(0.0)
+    X = tf.placeholder(shape=(None, nb_features), dtype=tf.float32, name='X')
+    Y = tf.placeholder(shape=None, dtype=tf.float32, name='Y')
+    w = tf.Variable(tf.zeros(nb_features), name='weights')
+    bias = tf.Variable(0.0, name='bias')
 
-    w_col = tf.reshape(w, (nb_features, 1))
-    hyp = tf.add(tf.matmul(X, w_col), bias)
+    w_col = tf.reshape(w, (nb_features, 1), name='weights_reshaped')
+    hyp = tf.add(tf.matmul(X, w_col), bias, name='hypothesis')
 
-    Y_col = tf.reshape(Y, (-1, 1))
+    Y_col = tf.reshape(Y, (-1, 1), name='Y_reshaped')
     regularizer = tf.nn.l2_loss(w_col, name='regularizer')
     # loss function using L2 Regularization
     loss = tf.abs(tf.reduce_mean(tf.square(hyp - Y_col) + lmd * regularizer), name='loss')
@@ -66,7 +67,7 @@ def polynomial_regression(data_x, data_y, nb_features, nb_samples, lmd):
         sess.run(tf.global_variables_initializer())
 
         total_loss = 0
-        nb_epochs = 100  # 100 training epochs
+        nb_epochs = 100                                                             # 100 training epochs
         for epoch in range(nb_epochs):
 
             # Stochastic Gradient Descent
@@ -79,21 +80,21 @@ def polynomial_regression(data_x, data_y, nb_features, nb_samples, lmd):
 
             total_loss += epoch_loss
             epoch_loss /= nb_samples
-            if (epoch + 1) % 10 == 0:  # print every 10-th
+            if (epoch + 1) % 10 == 0:                                               # print every 10-th
                 print(
                     'Lambda: {}| Epoch: {}/{}| Avg loss: {:.7f}'.format(lmd, epoch + 1, nb_epochs, epoch_loss))
 
         w_val = sess.run(w)
         bias_val = sess.run(bias)
-        print('w = ', w_val, 'bias = ', bias_val, '\n')
+        print('w = ', w_val, 'bias = ', bias_val)
+        print('total loss = ', total_loss, '\n')
         xs = create_feature_matrix(np.linspace(-2, 4, 100), nb_features)
         hyp_val = sess.run(hyp, feed_dict={X: xs})
         return xs, hyp_val, total_loss
 
 
 def main():
-    tf.reset_default_graph()
-    np.set_printoptions(suppress=True, precision=5)  # display floating point numbers to 5 decimals
+    np.set_printoptions(suppress=True, precision=5)                       # display floating point numbers to 5 decimals
 
     data_x, data_y, nb_samples = process_data('data/funky.csv')
 
@@ -128,3 +129,15 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+"""
+Zakljucak:
+
+Sa dodatom L2 regularizaciom, regresione krive su jako slicne za vrednosti lambda iz skupa {0, 0.001, 0.01, 0,1 i 1}
+i dobro opisuju podatke. Finalne i prosecne vrednosti funkcije troska su takodje slicne, ali se njihova vrednost 
+smanjuje zajedno sa parametrom lambda. Situacija je drugacija za parametar lambda iz skupa {10, 100}. Kako se lambda 
+povecava regresiona kriva odstupa od svog optimalnog polozaja i ne opisuje dobro date podatke. Pored toga, finalne i
+prosecne vrednosti funkcije troska se znacajno povecavaju sa povecanjem lambda. Stoga, trosak je proporcionalan 
+vrednoscu parametra lambda, pa je optimalno uzeti 0 za vrednost lambda.
+
+"""

@@ -1,13 +1,23 @@
 TODO popuniti odgovorima na pitanja iz problema 1
+a. Word2vec
+Word2vec predstavlja jednostavan model masinskog ucenja koji proizvodi “word embedding”, tj. procese u kojima je svaka
+rec mapirana u niz brojeva, odnosno vektor. Model je dvoslojna neuralna mreza koja kao ulaz uzima korpus teksta i kao
+izlaz daje set vektora gde svaki odgovara jedinstvenoj reci u korpusu. Rezultujuci set vektora zavisi od parametrizacije
+modela, od kojih jedan parametar definise dimenziju vektora. Dimenzija vektora predstavlja broj atributa reci koje model
+koristi, gde kvalitet modela raste sa povecanjem dimenzije. Ovakvo definisanje reci preko brojeva omogucava primenu
+matematickih operacija nad njima. Svrha ovog modela je takodje grupisanje slicnih reci, tj. dobijeni vektori se u
+prostoru nalaze u neposrednoj blizini ukoliko reci koje predstavljaju dele zajednicki kontekst u korpusu. Ovo daje
+odnose izmedju reci i omogucava siroku primenu word2vec modela u oblastima kao sto je “deep learning”, NLP, analiza
+recenica, prepoznavanje govora, bioinformatika itd..
 
 b. K-fold Cross-Validation
 K-fold Cross-Validation je statisticki metod koji se koristi za procenu preciznosti naseg modela.
 
-Za razliku od klasicne validacije (podele na trening i test skup),
-gde se preciznost dobijena na jednom test skupu moze znatno razlikovati u odnosu na preciznost dobijenu na nekom drugom test skupu,
-uvodimo resenje koje se zasniva na podeli postojeceg data seta u K manjih grupa (fold-ova) pri cemu se daje mogucnost da se svaka grupa tretira kao grupa test podataka (testing set) u nekom trenutku,
-dok se ostatak koristi za evaluaciju modela (training set).
-Ovaj postupak se ponavlja K puta, sto na kraju daje K vrednosti koje prestavljaju razlicite preciznosti u svakoj iteraciji.
+Za razliku od klasicne validacije (podele na trening i test skup), gde se preciznost dobijena na jednom test skupu moze
+znatno razlikovati u odnosu na preciznost dobijenu na nekom drugom test skupu, uvodimo resenje koje se zasniva na podeli
+postojeceg data seta u K manjih grupa (fold-ova) pri cemu se daje mogucnost da se svaka grupa tretira kao grupa test
+podataka (testing set) u nekom trenutku, dok se ostatak koristi za evaluaciju modela (training set). Ovaj postupak se
+ponavlja K puta, sto na kraju daje K vrednosti koje prestavljaju razlicite preciznosti u svakoj iteraciji.
 Finalna preciznost se dobija prosekom ovih vrednosti.
 
 c. Linearna separabilnost
