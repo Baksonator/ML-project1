@@ -31,19 +31,19 @@ class MultinomialNaiveBayes:
         # Calculate class priors
         self.priors = np.bincount(labels) / nb_examples
 
-        # Sum event occurences for each class
-        occs = np.zeros((self.nb_classes, self.nb_words))
+        # Sum event scores for each class
+        scores = np.zeros((self.nb_classes, self.nb_words))
         for i in range(nb_examples):
             c = labels[i]
             for w, cnt in x[i].items():
-                occs[c][w] += cnt
+                scores[c][w] += cnt
 
         # Calculate event likelihoods for each class
         self.likelihoods = np.zeros((self.nb_classes, self.nb_words))
         for c in range(self.nb_classes):
             for w in range(self.nb_words):
-                up = occs[c][w] + self.pseudocount
-                down = np.sum(occs[c]) + self.nb_words * self.pseudocount
+                up = scores[c][w] + self.pseudocount
+                down = np.sum(scores[c]) + self.nb_words * self.pseudocount
                 self.likelihoods[c][w] = up / down
 
     def predict(self, xs):
@@ -84,7 +84,7 @@ class Data:
 
     def load_data(self):
         """
-        Loads all the data from files, data is kept separetly for easier data distribution train and test set
+        Loads all the data from files, data is kept separately for easier data distribution train and test set
         :return:
         """
 
@@ -96,7 +96,7 @@ class Data:
         all_positive_files = glob.glob(self.path + 'pos/*.txt')
         all_negative_files = glob.glob(self.path + 'neg/*.txt')
 
-        # Add the all of the docs into the corpus
+        # Add all of the docs into the corpus
         for file in all_positive_files:
             with open(file, 'r', encoding='utf8') as fd:
                 self.positive_corpus.append(fd.read())
@@ -107,7 +107,7 @@ class Data:
 
     def clean_data(self):
         """
-        Cleans the data set from stopwords and speical characters, coverts to lower case and stemms all the words
+        Cleans the data set from stopwords and special characters, coverts to lower case and stemms all the words
         :return:
         """
 
@@ -282,7 +282,7 @@ class Data:
         }
 
 
-k = 3 # k-fold cross-validation, if set to 1 then normal training
+k = 5 # k-fold cross-validation, if set to 1 then normal training
 
 data = Data('data/imdb/', 1250, 0.8, 0.2, 10000)
 train_set = data.train_set
@@ -298,28 +298,32 @@ train_set['y'] = train_set['y'][indices]
 print('Training the model...')
 models = dict()
 num = len(train_set['x']) // k
-for i in range(k):
-    validate_set = {
-        'x': (train_set['x'][i * num:(i + 1) * num]),
-        'y': (train_set['y'][i * num:(i + 1) * num])
-    }
-    real_train_set = {
-        'x': (np.concatenate([train_set['x'][:i * num], train_set['x'][:(i + 1) * num]])),
-        'y': (np.concatenate([train_set['y'][:i * num], train_set['y'][:(i + 1) * num]]))
-    }
-    model = MultinomialNaiveBayes(2, data.nb_words, 2 * i + 1)
-    model.fit(real_train_set)
+for lp in range(1, 11):
+    avg_accuracy = 0
+    for i in range(k):
+        validate_set = {
+            'x': (train_set['x'][i * num:(i + 1) * num]),
+            'y': (train_set['y'][i * num:(i + 1) * num])
+        }
+        real_train_set = {
+            'x': (np.concatenate([train_set['x'][:i * num], train_set['x'][:(i + 1) * num]])),
+            'y': (np.concatenate([train_set['y'][:i * num], train_set['y'][:(i + 1) * num]]))
+        }
+        model = MultinomialNaiveBayes(2, data.nb_words, lp)
+        model.fit(real_train_set)
 
-    print('Predicting validate set...')
-    predictions_train = model.predict(validate_set['x'])
-    nb_correct = 0
-    nb_total = len(predictions_train)
-    for j in range(nb_total):
-        if validate_set['y'][j] == predictions_train[j]:
-            nb_correct += 1
-    accuracy = nb_correct / nb_total
-    print('Accuracy on validate set ' + str(i + 1) + ' is ' + str(accuracy))
-    models[i + 1] = accuracy
+        # print('Predicting validate set...')
+        predictions_train = model.predict(validate_set['x'])
+        nb_correct = 0
+        nb_total = len(predictions_train)
+        for j in range(nb_total):
+            if validate_set['y'][j] == predictions_train[j]:
+                nb_correct += 1
+        accuracy = nb_correct / nb_total
+        avg_accuracy += accuracy
+    avg_accuracy /= k
+    print('Accuracy for parameter ' + str(lp) + ' is ' + str(avg_accuracy))
+    models[lp] = avg_accuracy
 
 # Pick best model and train it on whole train set
 best_model_num = max(models, key=models.get)
