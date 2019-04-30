@@ -57,9 +57,10 @@ def polynomial_regression(data_x, data_y, nb_features, nb_samples, lmd):
     hyp = tf.add(tf.matmul(X, w_col), bias, name='hypothesis')
 
     Y_col = tf.reshape(Y, (-1, 1), name='Y_reshaped')
-    regularizer = tf.nn.l2_loss(w_col, name='regularizer')
+    loss = tf.reduce_mean(tf.square(hyp - Y_col), name='loss_before')
     # loss function using L2 Regularization
-    loss = tf.abs(tf.reduce_mean(tf.square(hyp - Y_col) + lmd * regularizer), name='loss')
+    regularizer = tf.nn.l2_loss(w_col, name='regularizer')
+    loss = tf.reduce_mean(loss + lmd * regularizer, name='loss')
     opt_op = tf.train.AdamOptimizer().minimize(loss)
 
     with tf.Session() as sess:
