@@ -22,8 +22,8 @@ Obicno se koristi na ogranicenom skupu podataka.
 
 c. Linearna separabilnost
 Linearna separabilnost je veoma bitan koncept u statistici, masinskom ucenju i neuralnim mrezama. Linearna separabilnost
-je odlika dva skupa tacaka, tj. podataka koje klasifikujemo u dve klase. Osnovna ideja je sledeca: Dva skupa tacaka
-, koje predstavljaju n-dimenzionalne vektore, pokusavamo da podelimo koristeci (n - 1)-dimenzionu  hiperravan, tako da
+je odlika dva skupa tacaka, tj. podataka koje klasifikujemo u dve klase. Osnovna ideja je sledeca: Dva skupa tacaka,
+koje predstavljaju n-dimenzionalne vektore, pokusavamo da podelimo koristeci (n - 1)-dimenzionu  hiperravan, tako da
 su sve tacke jedne klase sa jedne strane, a sve tacke druge klase sa druge strane te hiperravni. Ukoliko ovo mozemo
 uraditi (moze postojati vise mogucih ispravnih hiperravni), onda kazemo da su ta dva skupa (klase) tacaka linearno
 separabilna. Ako posmatramo problem u dve dimenzije, dva skupa tacaka su linearno separabilna ukoliko mozemo povuci
