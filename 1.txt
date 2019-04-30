@@ -10,14 +10,15 @@ odnose izmedju reci i omogucava siroku primenu word2vec modela u oblastima kao s
 recenica, prepoznavanje govora, bioinformatika itd..
 
 b. K-fold Cross-Validation
-K-fold Cross-Validation je statisticki metod koji se koristi za procenu preciznosti naseg modela.
+K-fold Cross-Validation je statisticki metod koji se koristi za procenu preciznosti naseg modela i menja postupak validacije.
 
-Za razliku od klasicne validacije (podele na trening i test skup), gde se preciznost dobijena na jednom test skupu moze
-znatno razlikovati u odnosu na preciznost dobijenu na nekom drugom test skupu, uvodimo resenje koje se zasniva na podeli
-postojeceg data seta u K manjih grupa (fold-ova) pri cemu se daje mogucnost da se svaka grupa tretira kao grupa test
-podataka (testing set) u nekom trenutku, dok se ostatak koristi za evaluaciju modela (training set). Ovaj postupak se
+Za razliku od klasicne validacije (podele na trening, validacioni i test skup), gde se preciznost dobijena na jednom validacionom skupu moze
+znatno razlikovati u odnosu na preciznost dobijenu na nekom drugom validacionom skupu, uvodimo resenje koje se zasniva na podeli
+postojeceg data seta u K manjih grupa (fold-ova) pri cemu se daje mogucnost da se svaka grupa tretira kao grupa validacionih
+podataka (validation set) u nekom trenutku, dok se ostatak koristi za treniranje modela (training set). Ovaj postupak se
 ponavlja K puta, sto na kraju daje K vrednosti koje prestavljaju razlicite preciznosti u svakoj iteraciji.
 Finalna preciznost se dobija prosekom ovih vrednosti.
+Obicno se koristi na ogranicenom skupu podataka.
 
 c. Linearna separabilnost
 Linearna separabilnost je veoma bitan koncept u statistici, masinskom ucenju i neuralnim mrezama. Linearna separabilnost
