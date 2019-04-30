@@ -33,7 +33,6 @@ def process_data(filename):
     data['y'] = data['y'][indices]
 
     # normalize
-    # axis = 0?
     data['x'] = (data['x'] - np.mean(data['x'], axis=0)) / np.std(data['x'], axis=0)
     data['y'] = (data['y'] - np.mean(data['y'])) / np.std(data['y'])
 
@@ -66,7 +65,6 @@ def polynomial_regression(data_x, data_y, nb_features, nb_samples, lmd):
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
 
-        total_loss = 0
         nb_epochs = 100                                                             # 100 training epochs
         for epoch in range(nb_epochs):
 
@@ -78,7 +76,6 @@ def polynomial_regression(data_x, data_y, nb_features, nb_samples, lmd):
                 _, curr_loss = sess.run([opt_op, loss], feed_dict=feed)
                 epoch_loss += curr_loss
 
-            total_loss += epoch_loss
             epoch_loss /= nb_samples
             if (epoch + 1) % 10 == 0:                                               # print every 10-th
                 print(
@@ -87,10 +84,11 @@ def polynomial_regression(data_x, data_y, nb_features, nb_samples, lmd):
         w_val = sess.run(w)
         bias_val = sess.run(bias)
         print('w = ', w_val, 'bias = ', bias_val)
-        print('total loss = ', total_loss, '\n')
         xs = create_feature_matrix(np.linspace(-2, 4, 100), nb_features)
         hyp_val = sess.run(hyp, feed_dict={X: xs})
-        return xs, hyp_val, total_loss
+        final_loss = sess.run(loss, feed_dict={X: data_x, Y: data_y})
+        print('final loss = ', final_loss, '\n')
+        return xs, hyp_val, final_loss
 
 
 def main():
@@ -103,11 +101,11 @@ def main():
     plt.xlabel('X')
     plt.ylabel('Y')
 
-    total = []
+    final = []
     for (c, lmd) in [('k', 0), ('y', 0.001), ('m', 0.01), ('c', 0.1), ('r', 1), ('g', 10), ('b', 100)]:
-        xs, hyp_val, total_loss = polynomial_regression(data_x, data_y, 3, nb_samples, lmd)
+        xs, hyp_val, final_loss = polynomial_regression(data_x, data_y, 3, nb_samples, lmd)
         plt.plot(xs[:, 0].tolist(), hyp_val.tolist(), color=c, label='lmd={}'.format(lmd))
-        total.append(total_loss)
+        final.append(final_loss)
 
     # first graph
     plt.xlim([-2, 4])
@@ -116,7 +114,7 @@ def main():
     plt.show()
 
     # second graph
-    plt.scatter([0, 0.001, 0.01, 0.1, 1, 10, 100], total, c="r")
+    plt.scatter([0, 0.001, 0.01, 0.1, 1, 10, 100], final, c="r")
     plt.xlabel('Lambda')
     plt.ylabel('Final loss function')
     plt.show()

@@ -33,7 +33,6 @@ def process_data(filename):
     data['y'] = data['y'][indices]
 
     # normalize
-    # axis = 0?
     data['x'] = (data['x'] - np.mean(data['x'], axis=0)) / np.std(data['x'], axis=0)
     data['y'] = (data['y'] - np.mean(data['y'])) / np.std(data['y'])
 
@@ -64,7 +63,6 @@ def polynomial_regression(data_x, data_y, nb_features, nb_samples):
     with tf.Session() as sess:
         sess.run(tf.global_variables_initializer())
 
-        total_loss = 0
         nb_epochs = 100                                                         # 100 training epochs
         for epoch in range(nb_epochs):
 
@@ -76,7 +74,6 @@ def polynomial_regression(data_x, data_y, nb_features, nb_samples):
                 _, curr_loss = sess.run([opt_op, loss], feed_dict=feed)
                 epoch_loss += curr_loss
 
-            total_loss += epoch_loss
             epoch_loss /= nb_samples
             if (epoch + 1) % 10 == 0:                                           # print every 10-th
                 print('Degree: {}| Epoch: {}/{}| Avg loss: {:.7f}'.format(nb_features, epoch + 1, nb_epochs, epoch_loss))
@@ -84,10 +81,11 @@ def polynomial_regression(data_x, data_y, nb_features, nb_samples):
         w_val = sess.run(w)
         bias_val = sess.run(bias)
         print('w = ', w_val, 'bias = ', bias_val)
-        print('total loss = ', total_loss, '\n')
         xs = create_feature_matrix(np.linspace(-2, 4, 100), nb_features)
         hyp_val = sess.run(hyp, feed_dict={X: xs})
-        return xs, hyp_val, total_loss
+        final_loss = sess.run(loss, feed_dict={X: data_x, Y: data_y})
+        print('final loss = ', final_loss, '\n')
+        return xs, hyp_val, final_loss
 
 
 def main():
@@ -100,12 +98,12 @@ def main():
     plt.xlabel('X')
     plt.ylabel('Y')
 
-    total = []
+    final = []
     nb_features = 1
     for c in 'kymcrg':
-        xs, hyp_val, total_loss = polynomial_regression(data_x, data_y, nb_features, nb_samples)
+        xs, hyp_val, final_loss = polynomial_regression(data_x, data_y, nb_features, nb_samples)
         plt.plot(xs[:, 0].tolist(), hyp_val.tolist(), color=c, label='deg(p)={}'.format(nb_features))
-        total.append(total_loss)
+        final.append(final_loss)
         nb_features += 1
 
     # first graph
@@ -115,7 +113,7 @@ def main():
     plt.show()
 
     # second graph
-    plt.scatter([1, 2, 3, 4, 5, 6], total, c="r")
+    plt.scatter([1, 2, 3, 4, 5, 6], final, c="r")
     plt.xlabel('Degree of polynomial')
     plt.ylabel('Final loss function')
     plt.show()
@@ -128,10 +126,11 @@ if __name__ == "__main__":
 Zakljucak:
 
 Regresiona kriva i funkcija troska su jako slicne za polinome stepena 1 i 2. Tada je vrednost finalne funkcije troska 
-na celom skupu ~3916.88714, dok je prosecan trosak ~0.3140487. Krive prvog i drugog stepena ne "fituju" podatke dovoljno
+na celom skupu ~0.31352472, dok je prosecan trosak ~0.3140487. Krive prvog i drugog stepena ne "fituju" podatke dovoljno
 precizno, sto nije slucaj sa polinomima veceg stepena. Regresiona kriva treceg stepena prati podatke dobro, vrednost
-finalne funkcije troska je ~1567.86235, a prosecan trosak iznosi ~0.1094187. Slican je slucaj sa polinomima stepena 4, 
+finalne funkcije troska je ~0.108210765, a prosecan trosak iznosi ~0.1094187. Slican je slucaj sa polinomima stepena 4, 
 5 i 6. Kako se stepen polinoma povecava, regresiona kriva se ne menja znacajno. Takodje se finalne i prosecne funkcija 
-troska ne smanjuju mnogo. Stoga, najoptimalnije je izbrati stepen polinoma 3.
+troska ne smanjuju. Stoga, najoptimalnije je izbrati stepen polinoma 3. Sa samog grafika koji prikazuje podatke mozemo 
+primetiti da polinomijalna kriva jeste stepena 3, jer postoje dva "skretanja".
 
 """
