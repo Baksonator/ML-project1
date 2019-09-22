@@ -1,4 +1,5 @@
 The algorithms can be run by doing the following:
+
 Polynomial regression:
 
 2a.py will run plain polynomial regression with 6 different polynomial degrees (1 to 6) for the data set funky.csv. The first graph produced shows all the data in 2D as well as all 6 of the polynomial curves, and the second graph shows the dependency of the cost functions from the degree of the polynomial.
